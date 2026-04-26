@@ -2,7 +2,6 @@ name: deployment
 on: push
 jobs:
   test:
-    runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -12,7 +11,7 @@ jobs:
           node-version: '24.12.0'
       - name: Print Node.js version
         run: node -v
-      - name: Cache npm
+      - name: cache-npm
         uses: actions/cache@v5
         with:
           path: ~/.npm
@@ -33,15 +32,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24.12.0'
-      - name: Cache npm
-        uses: actions/cache@v5
+      - uses: actions/cache/restore@v5
+        id: cache
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-      - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build project
         run: npm run build
