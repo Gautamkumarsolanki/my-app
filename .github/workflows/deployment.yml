@@ -41,7 +41,7 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Publish Build File Name
-        run: find build/assets/^main\.[0-9a-f]+\.js$ -type f -execdir echo '{}' ';'
+        run: find build/static/js/^main\.[0-9a-f]+\.js$ -type f -execdir echo '{}' ';'
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
