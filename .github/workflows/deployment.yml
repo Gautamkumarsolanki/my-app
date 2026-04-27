@@ -28,7 +28,7 @@ jobs:
       - name: Run tests
         run: npm test
       - name: Log test Status
-        run: echo "$APP_NAME tests run successfully ${{secrets.API_KEY}}"
+        run: echo "$APP_NAME tests run successfully ${{secrets.API_KEY}} ${{vars.URL}}"
   build:
     runs-on: ubuntu-latest
     environment: DEV
@@ -62,7 +62,7 @@ jobs:
           name: build
           path: build/
       - name: ENV SECRET
-        run: echo "${{secrets.API_KEY}}"
+        run: echo "${{secrets.API_KEY}} ${{vars.URL}}"
   deploy:
     runs-on: ubuntu-latest
     environment: PROD
@@ -76,4 +76,4 @@ jobs:
       - name: Get Build File Name
         run: echo "${{ needs.build.outputs.build_file }}"
       - name: Deploy to server
-        run: echo "Deploying to server... ${{secrets.API_KEY}}"
+        run: echo "Deploying to server... ${{secrets.API_KEY}} ${{vars.URL}}"
