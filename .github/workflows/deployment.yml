@@ -28,6 +28,8 @@ jobs:
         run: npm test
   build:
     runs-on: ubuntu-latest
+    outputs:
+      build_file: ${{steps.publish_build.outputs.build_file}}
     needs: test
     steps:
       - name: Check out repository
@@ -41,7 +43,10 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Publish Build File Name
-        run: find build/static/js/ -type f -name 'main.*.js'
+        id: publish_build
+        run: |
+          BUILD_OUTPUT=$(find build/static/js/ -type f -name 'main.*.js' | head -n 1)
+          echo "build_file=$BUILD_OUTPUT" >> "$GITHUB_OUTPUT"
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
