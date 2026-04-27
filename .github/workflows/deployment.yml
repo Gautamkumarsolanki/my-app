@@ -30,6 +30,7 @@ jobs:
       - name: Exit job
         run: exit 1
       - name: Log test Status
+        if: failure()
         run: echo "$APP_NAME tests run successfully ${{secrets.API_KEY}} ${{vars.URL}}"
   build:
     runs-on: ubuntu-latest
