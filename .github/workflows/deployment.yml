@@ -27,6 +27,8 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
+      - name: Exit job
+        run: exit 1
       - name: Log test Status
         run: echo "$APP_NAME tests run successfully ${{secrets.API_KEY}} ${{vars.URL}}"
   build:
