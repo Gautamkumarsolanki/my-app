@@ -7,6 +7,7 @@ env:
   APP_NAME: My_App
 jobs:
   test:
+    environment: STAGE
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -27,9 +28,10 @@ jobs:
       - name: Run tests
         run: npm test
       - name: Log test Status
-        run: echo "$APP_NAME tests run successfully"
+        run: echo "$APP_NAME tests run successfully ${{secrets.API_KEY}}"
   build:
     runs-on: ubuntu-latest
+    environment: DEV
     outputs:
       build_file: ${{steps.publish_build.outputs.build_file}}
     needs: test
@@ -59,8 +61,11 @@ jobs:
         with:
           name: build
           path: build/
+      - name: ENV SECRET
+        run: echo "${{secrets.API_KEY}}"
   deploy:
     runs-on: ubuntu-latest
+    environment: PROD
     needs: build
     steps:
       - name: Download build artifacts
@@ -69,4 +74,4 @@ jobs:
           name: build
           path: build/
       - name: Deploy to server
-        run: echo "Deploying to server..."
+        run: echo "Deploying to server... ${{secrets.API_KEY}}"
