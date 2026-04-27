@@ -61,5 +61,7 @@ jobs:
         with:
           name: build
           path: build/
+      - name: Get Build File Name
+        run: echo "${{ needs.build.outputs.build_file }}"
       - name: Deploy to server
         run: echo "Deploying to server..."
