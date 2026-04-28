@@ -11,8 +11,14 @@ on:
     secrets:
        api_key:
           required: true
+    outputs:
+      status:
+        description: Job Status
+        value: ${{ jobs.job_1.outputs.job_out }}
 jobs:
   job_1:
+    outputs:
+      job_out: ${{ steps.export_out.outputs.my_output }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps: 
@@ -20,3 +26,6 @@ jobs:
          run: echo "${{ secrets.api_key }}"
        - name: print input
          run: echo "${{ inputs.file_name }}"
+       - name: expot value
+         id: export_out
+         run: echo "my_output=world" >> $GITHUB_OUTPUT
