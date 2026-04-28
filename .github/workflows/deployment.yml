@@ -89,6 +89,6 @@ jobs:
       - name: Deploy to server
         run: echo "Deploying to server... ${{secrets.API_KEY}} ${{vars.URL}}"
   call_job:
-    uses: ./.github/workflows/resuable_job.yml
+    uses: ./.github/workflows/reusable_job.yml
     secrets:
         api_key: ${{ secrets.API_KEY }}
