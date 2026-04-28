@@ -1,0 +1,15 @@
+name: docker_deploy
+on:
+  push:
+    branches: 
+       - main
+jobs:
+  node_deploy:
+      runs-on: ubuntu-latest
+      container: 
+         image: node:18
+      steps:
+        - name: CHeckout code
+          uses: actions/checkout@v4
+        - name: node version
+          run: node -version
