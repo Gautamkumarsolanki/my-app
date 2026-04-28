@@ -7,7 +7,7 @@ jobs:
   node_deploy:
       runs-on: ubuntu-latest
       container: 
-         image: node:18
+         image: node:16
       steps:
         - name: CHeckout code
           uses: actions/checkout@v4
