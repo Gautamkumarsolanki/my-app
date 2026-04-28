@@ -99,6 +99,7 @@ jobs:
      needs: call_job
      runs-on: ubuntu-latest
      steps:
+       - uses: actions/checkout@v6
        - run: echo "${{ needs.call_job.outputs.status }}"
        - name: Run the first action
          uses: ./.github/actions/cache_deps
