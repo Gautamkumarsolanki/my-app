@@ -1,0 +1,18 @@
+name: Reusable_job
+on: 
+  workflow_call:
+    inputs:
+       file_name:
+          required: true
+          type: string
+    secrets:
+       api_key:
+          required: true
+jobs:
+  job_1:
+    runs-on: ubuntu-latest
+    steps: 
+       - name: print value
+         run: echo "${{ secrets.api_key }}"
+       - name: print input
+         run: echo "${{ inputs.file_name }}"

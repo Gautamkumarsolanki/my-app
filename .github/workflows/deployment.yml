@@ -88,3 +88,8 @@ jobs:
         run: echo "${{ needs.build.outputs.build_file }}"
       - name: Deploy to server
         run: echo "Deploying to server... ${{secrets.API_KEY}} ${{vars.URL}}"
+  call_job:
+    uses: ./.github/workflows/resuable_job.yml
+    secrets: inherit
+    with:
+      environment: PROD
