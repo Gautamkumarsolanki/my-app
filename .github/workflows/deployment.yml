@@ -100,3 +100,5 @@ jobs:
      runs-on: ubuntu-latest
      steps:
        - run: echo "${{ needs.call_job.outputs.status }}"
+       - name: Run the first action
+         uses: ./.github/actions/cache_deps
