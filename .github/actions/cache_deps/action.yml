@@ -1,1 +1,25 @@
+name: Demo Action
+description: This is a first action
+inputs:
+  name:
+    description: 'Name to greet'
+    required: false
+    default: 'World'
+
+outputs:
+  greeting:
+    description: 'The greeting message'
+    value: ${{ steps.greet.outputs.greeting }}
+
+runs:
+  using: composite
+  steps:
+    - id: greet
+      shell: bash
+      env:
+        INPUT_NAME: ${{ inputs.name }}
+      run: |
+        GREETING="Hello $INPUT_NAME"
+        echo "$GREETING"
+        echo "greeting=$GREETING" >> $GITHUB_OUTPUT
 
