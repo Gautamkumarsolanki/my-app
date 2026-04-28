@@ -5,12 +5,16 @@ on:
        file_name:
           required: true
           type: string
+       environment:
+          required: true
+          type: string
     secrets:
        api_key:
           required: true
 jobs:
   job_1:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps: 
        - name: print value
          run: echo "${{ secrets.api_key }}"
