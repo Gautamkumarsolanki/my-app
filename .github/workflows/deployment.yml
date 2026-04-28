@@ -90,8 +90,6 @@ jobs:
         run: echo "Deploying to server... ${{secrets.API_KEY}} ${{vars.URL}}"
   call_job:
     uses: ./.github/workflows/reusable_job.yml
-    secrets:
-        api_key: ${{ secrets.API_KEY }}
     with:
       file_name: "input.xlsx"
       environment: "PROD"
