@@ -9,13 +9,16 @@ jobs:
   test:
     environment: STAGE
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.10.0,24.11.0,24.12.0]
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '24.12.0'
+          node-version: ${{ matrix.node-version }}
       - name: Print Node.js version
         run: node -v
       - name: cache-npm
