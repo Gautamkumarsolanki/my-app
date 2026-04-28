@@ -95,3 +95,8 @@ jobs:
     with:
       file_name: "input.xlsx"
       environment: "PROD"
+  sub_output:
+     needs: call_job
+     runs-on: ubuntu-latest
+     steps:
+       - run: echo "${{ needs.call_job.outputs.status }}"
