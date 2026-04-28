@@ -94,3 +94,4 @@ jobs:
         api_key: ${{ secrets.API_KEY }}
     with:
       file_name: "input.xlsx"
+      environment: "PROD"
