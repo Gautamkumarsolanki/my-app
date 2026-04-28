@@ -90,6 +90,5 @@ jobs:
         run: echo "Deploying to server... ${{secrets.API_KEY}} ${{vars.URL}}"
   call_job:
     uses: ./.github/workflows/resuable_job.yml
-    secrets: inherit
-    with:
-      environment: PROD
+    secrets:
+        api_key: ${{ secrets.API_KEY }}
