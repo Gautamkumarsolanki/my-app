@@ -8,9 +8,6 @@ on:
        environment:
           required: true
           type: string
-    secrets:
-       api_key:
-          required: true
 jobs:
   job_1:
     runs-on: ubuntu-latest
