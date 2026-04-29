@@ -103,3 +103,5 @@ jobs:
        - run: echo "${{ needs.call_job.outputs.status }}"
        - name: Run the first action
          uses: ./.github/actions/cache_deps
+       - name: Echo Github Token
+         run: echo "${{ secrets.GITHUB_TOKEN }}"
