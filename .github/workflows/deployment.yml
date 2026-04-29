@@ -107,3 +107,7 @@ jobs:
          uses: ./.github/actions/cache_deps
        - name: Echo Github Token
          run: echo "${{ secrets.GITHUB_TOKEN }}"
+       - name: Read code content
+         run: |
+              curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/contents/
