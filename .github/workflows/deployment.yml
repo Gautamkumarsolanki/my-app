@@ -138,6 +138,7 @@ jobs:
     permissions:
       contents: none  # No repo access needed here
     steps:
+      - uses: actions/checkout@v4
       - run: echo "${{ needs.call_job.outputs.status }}"
 
       - name: Run the first action
