@@ -1,119 +1,151 @@
 name: deployment
-on: 
-  push: 
+
+on:
+  push:
     branches:
       - main
+
 env:
   APP_NAME: My_App
-permissions: 
-  contents: none
+
+permissions:
+  contents: none  # Global - deny all content access
+
 jobs:
   test:
-    permissions: 
-      contents: none
+    permissions:
+      contents: read  # needed ONLY for checkout
     environment: STAGE
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 2
       matrix:
-        node-version: [24.10.0,24.11.0,24.12.0,24.13.0,24.14.0]
+        node-version: [24.10.0, 24.11.0, 24.12.0, 24.13.0, 24.14.0]
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
-      - name: Read code content
-        run: |
-              curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              https://api.github.com/repos/${{ github.repository }}/contents/  
+        uses: actions/checkout@v4
+
+      # REMOVED: "Read code content" curl step
+      # This step was intentionally reading repo contents via API
+      # With contents: read scoped only to checkout, direct API calls
+      # using GITHUB_TOKEN will still work unless you remove this step.
+      # Since your goal is to block API access, this step is removed.
+
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+
       - name: Print Node.js version
         run: node -v
+
       - name: cache-npm
         id: cached
         uses: actions/cache@v5
         with:
           path: node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install dependencies
-        if: steps.cached.outputs.cache-hit!='true'
+        if: steps.cached.outputs.cache-hit != 'true'
         run: npm ci
+
       - name: Run tests
         run: npm test
-      # - name: Exit job
-      #   run: exit 1
+
       - name: Log test Status
         if: failure()
-        run: echo "$APP_NAME tests run successfully ${{secrets.API_KEY}} ${{vars.URL}}"
+        run: echo "$APP_NAME tests run successfully ${{ secrets.API_KEY }} ${{ vars.URL }}"
+
   build:
     runs-on: ubuntu-latest
     environment: DEV
+    permissions:
+      contents: read  # needed ONLY for checkout
     outputs:
-      build_file: ${{steps.publish_build.outputs.build_file}}
+      build_file: ${{ steps.publish_build.outputs.build_file }}
     needs: test
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '24.12.0'
+
       - name: cache-npm
         id: cached
         uses: actions/cache@v5
         with:
           path: node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install dependencies
-        if: steps.cached.outputs.cache-hit!='true'
+        if: steps.cached.outputs.cache-hit != 'true'
         run: npm ci
+
       - name: Build project
         run: npm run build
+
       - name: Publish Build File Name
         id: publish_build
         run: |
           BUILD_OUTPUT=$(find build/static/js/ -type f -name 'main.*.js' | head -n 1)
           echo "build_file=$BUILD_OUTPUT" >> "$GITHUB_OUTPUT"
+
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: build/
+
       - name: ENV SECRET
-        run: echo "${{secrets.API_KEY}} ${{vars.URL}}"
+        run: echo "${{ secrets.API_KEY }} ${{ vars.URL }}"
+
   deploy:
     runs-on: ubuntu-latest
     environment: PROD
+    permissions:
+      contents: none  # No repo access needed for deploy
     needs: build
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           name: build
           path: build/
+
       - name: Get Build File Name
         run: echo "${{ needs.build.outputs.build_file }}"
+
       - name: Deploy to server
-        run: echo "Deploying to server... ${{secrets.API_KEY}} ${{vars.URL}}"
+        run: echo "Deploying to server... ${{ secrets.API_KEY }} ${{ vars.URL }}"
+
   call_job:
+    permissions:
+      contents: none  # No repo access needed for reusable workflow call
     uses: ./.github/workflows/reusable_job.yml
-    secrets: 
+    secrets:
       api_key: ${{ secrets.API_KEY }}
     with:
       file_name: "input.xlsx"
       environment: "PROD"
+
   sub_output:
-     needs: call_job
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v6
-       - run: echo "${{ needs.call_job.outputs.status }}"
-       - name: Run the first action
-         uses: ./.github/actions/cache_deps
-       - name: Echo Github Token
-         run: echo "${{ secrets.GITHUB_TOKEN }}"
-       - name: Read code content
-         run: |
-              curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              https://api.github.com/repos/${{ github.repository }}/contents/
+    needs: call_job
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none  # No repo access needed here
+    steps:
+      - run: echo "${{ needs.call_job.outputs.status }}"
+
+      - name: Run the first action
+        uses: ./.github/actions/cache_deps
+
+      - name: Echo Github Token
+        run: echo "${{ secrets.GITHUB_TOKEN }}"
+
+      # REMOVED: "Read code content" curl step
+      # Same reason as above - this was directly reading repo contents
+      # which contradicts the contents: none permission goal
