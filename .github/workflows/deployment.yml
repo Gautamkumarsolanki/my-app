@@ -5,6 +5,8 @@ on:
       - main
 env:
   APP_NAME: My_App
+permissions: 
+  contents: none
 jobs:
   test:
     environment: STAGE
