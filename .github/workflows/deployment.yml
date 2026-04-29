@@ -9,6 +9,8 @@ permissions:
   contents: none
 jobs:
   test:
+    permissions: 
+      contents: none
     environment: STAGE
     runs-on: ubuntu-latest
     strategy:
@@ -18,6 +20,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+      - name: Read code content
+        run: |
+              curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/contents/  
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
