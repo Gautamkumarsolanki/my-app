@@ -20,6 +20,7 @@ jobs:
      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
      with:
       role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/UploadToS3
+      aws-region: ap-south-1
    - name: Upload File To S3
      run: |
           aws s3 cp ./package.json s3://bucket-demo-5221/
