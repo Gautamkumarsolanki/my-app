@@ -1,0 +1,25 @@
+name: AWS_OIDC_S3:UPLOAD
+
+on:
+ push:
+  branches:
+   - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+ S3Upload:
+  environment: DEV
+  runs-on: ubuntu-latest
+  steps:
+   - name: Checkout the Repository
+     uses: actions/checkout@v4
+   - name: Configure AWS Credentials
+     uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+     with:
+      role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/UploadToS3
+   - name: Upload File To S3
+     run: |
+          aws s3 cp ./package.json s3://bucket-demo-5221/
